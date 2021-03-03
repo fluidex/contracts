@@ -46,12 +46,14 @@ describe("Fluidex", () => {
       tokenId
     );
 
+    // TODO: NewPriorityRequest event
     await expect(
       fluidex
         .connect(acc2)
         .depositERC20(erc20Mock.address, acc2addr, depositAmount)
     )
-      .to.emit(fluidex, "Deposit")
+      .to
+      .emit(fluidex, "Deposit")
       .withArgs(tokenId, acc2addr, depositAmount);
     await expect(
       fluidex.withdrawERC20(erc20Mock.address, acc2addr, withdrawAmount)
@@ -64,6 +66,7 @@ describe("Fluidex", () => {
     const depositAmount = 500;
     const withdrawAmount = 300;
 
+    // TODO: NewPriorityRequest event
     await expect(
       fluidex
         .connect(acc2)
