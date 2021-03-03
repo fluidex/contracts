@@ -5,6 +5,7 @@ pragma solidity >=0.6.0 <0.8.0;
 import {
     ReentrancyGuard
 } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/SafeCast.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -69,8 +70,11 @@ contract Fluidex is ReentrancyGuard, Ownable {
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
         require(to != address(0), "invalid address");
+
+        // TODO: 
         uint256 realAmount = SafeCast.toUint128(msg.value);
-        // 0 tokenId means ETH
+
+        // 0 tokenId means native ETH coin
         registerDeposit(0, to, realAmount);
     }
 
