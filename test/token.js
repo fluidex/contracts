@@ -64,18 +64,18 @@ describe("Fluidex", () => {
     const depositAmount = 500;
     const withdrawAmount = 300;
 
-    // await expect(
-    //   fluidex
-    //     .connect(acc2)
-    //     .depositETH(erc20Mock.address, acc2addr, depositAmount)
-    // )
-    //   .to.emit(fluidex, "Deposit")
-    //   .withArgs(tokenId, acc2addr, depositAmount);
+    await expect(
+      fluidex
+        .connect(acc2)
+        .depositETH(acc2addr, {value: depositAmount})
+    )
+      .to.emit(fluidex, "Deposit")
+      .withArgs(0, acc2addr, depositAmount);
 
-    // await expect(
-    //   fluidex.withdrawETH(erc20Mock.address, acc2addr, withdrawAmount)
-    // )
-    //   .to.emit(fluidex, "Withdraw")
-    //   .withArgs(tokenId, acc2addr, withdrawAmount);
+    await expect(
+      fluidex.withdrawETH(acc2addr, withdrawAmount)
+    )
+      .to.emit(fluidex, "Withdraw")
+      .withArgs(0, acc2addr, withdrawAmount);
   });
 });
