@@ -56,7 +56,7 @@ contract Fluidex is ReentrancyGuard, Ownable {
     }
 
     // 0 tokenId means native ETH coin
-    // TODO: use uint256 for amount?
+    // TODO: zkSync uses uint128 for amount
     function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
         // TODO: addPriorityRequest
 
