@@ -64,7 +64,6 @@ contract Fluidex is ReentrancyGuard, Ownable {
     }
 
     /// @param to the L2 address of the deposit target.
-    /// @param amount the deposit amount.
     // TODO: change to L2 address
     function depositETH(address to) external payable {
         // You must `approve` the allowance before calling this method
