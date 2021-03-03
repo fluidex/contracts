@@ -83,10 +83,7 @@ contract Fluidex is ReentrancyGuard, Ownable {
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
         uint256 balanceBeforeDeposit = token.balanceOf(address(this));
-
-        // TODO: is this returning boolean?
-        require(token.safeTransferFrom(msg.sender, address(this), amount), "c"); // token transfer failed deposit
-
+        token.safeTransferFrom(msg.sender, address(this), amount);
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
         uint256 realAmount = balanceAfterDeposit.sub(balanceBeforeDeposit);
         emit Deposit(tokenId, to, realAmount);
