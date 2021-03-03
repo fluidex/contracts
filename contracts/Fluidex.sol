@@ -50,13 +50,32 @@ contract Fluidex is ReentrancyGuard, Ownable {
         nonReentrant
     {
         // TODO: check valid quote token id. We may support only several quote tokens like USDC and DAI.
+        // TODO: add map in store
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
     /// @param to the L2 address of the deposit target.
+    /// @param amount the deposit amount.
+    function depositETH(
+        address to, // TODO: change to L2 address
+        uint128 amount
+    ) external nonReentrant {
+        // You must `approve` the allowance before calling this method
+        require(to != address(0), "invalid address");
+
+        // TODO: balance map?
+        // TODO: addPriorityRequest
+
+        // 0 tokenId means ETH
+        emit Deposit(0, to, SafeCast.toUint128(msg.value));
+    }
+
+    // TODO: balance map?
+    /// @param to the L2 address of the deposit target.
+    /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
-        address to,
+        address to, // TODO: change to L2 address
         uint128 amount
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
@@ -64,7 +83,10 @@ contract Fluidex is ReentrancyGuard, Ownable {
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
         uint256 balanceBeforeDeposit = token.balanceOf(address(this));
-        token.safeTransferFrom(msg.sender, address(this), amount);
+
+        // TODO: is this returning boolean?
+        require(token.safeTransferFrom(msg.sender, address(this), amount), "c"); // token transfer failed deposit
+
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
         uint256 realAmount = balanceAfterDeposit.sub(balanceBeforeDeposit);
         emit Deposit(tokenId, to, realAmount);
