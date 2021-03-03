@@ -11,6 +11,8 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
+import "./Utils.sol";
+
 import "./Storage.sol";
 import "./Config.sol";
 import "./Events.sol";
@@ -133,19 +135,14 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     function addPriorityRequest(Operations.OpType opType, bytes memory pubData) internal {
         // Expiration block is: current block number + priority expiration delta
         uint64 expirationBlock = uint64(block.number + PRIORITY_EXPIRATION);
-
         uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
-
-        // bytes20 hashedPubData = Utils.hashBytesToBytes20(pubData);
-
-        // priorityRequests[nextPriorityRequestId] = PriorityOperation({
-        //     hashedPubData: hashedPubData,
-        //     expirationBlock: expirationBlock,
-        //     opType: opType
-        // });
-
+        bytes20 hashedPubData = Utils.hashBytesToBytes20(pubData);
+        priorityRequests[nextPriorityRequestId] = PriorityOperation({
+            hashedPubData: hashedPubData,
+            expirationBlock: expirationBlock,
+            opType: opType
+        });
         emit NewPriorityRequest(msg.sender, nextPriorityRequestId, opType, pubData, uint256(expirationBlock));
-
         totalOpenPriorityRequests++;
     }
 }
