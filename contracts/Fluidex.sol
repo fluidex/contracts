@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
+import "./Operations.sol";
 
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
 contract Fluidex is ReentrancyGuard, Ownable {
