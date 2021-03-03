@@ -59,8 +59,16 @@ contract Fluidex is ReentrancyGuard, Ownable {
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
     function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
-        // TODO: addPriorityRequest
-
+        // Priority Queue request
+        Operations.Deposit memory op =
+            Operations.Deposit({
+                accountId: 0, // unknown at this point
+                owner: to,
+                tokenId: tokenId,
+                amount: amount
+            });
+        bytes memory pubData = Operations.writeDepositPubdataForPriorityQueue(op);
+        addPriorityRequest(Operations.OpType.Deposit, pubData);
         emit Deposit(tokenId, to, amount);
     }
 
@@ -116,5 +124,28 @@ contract Fluidex is ReentrancyGuard, Ownable {
         (bool success, ) = to.call{value: amount}("");
         require(success, "withdrawETH"); // ETH withdraw failed
         emit Withdraw(0, to, amount);
+    }
+
+    /// @notice Saves priority request in storage
+    /// @dev Calculates expiration block for request, store this request and emit NewPriorityRequest event
+    /// @param opType Rollup operation type
+    /// @param pubData Operation pubdata
+    function addPriorityRequest(Operations.OpType opType, bytes memory pubData) internal {
+        // // Expiration block is: current block number + priority expiration delta
+        // uint64 expirationBlock = uint64(block.number + PRIORITY_EXPIRATION);
+
+        // uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
+
+        // bytes20 hashedPubData = Utils.hashBytesToBytes20(_pubData);
+
+        // priorityRequests[nextPriorityRequestId] = PriorityOperation({
+        //     hashedPubData: hashedPubData,
+        //     expirationBlock: expirationBlock,
+        //     opType: _opType
+        // });
+
+        // emit NewPriorityRequest(msg.sender, nextPriorityRequestId, _opType, _pubData, uint256(expirationBlock));
+
+        // totalOpenPriorityRequests++;
     }
 }

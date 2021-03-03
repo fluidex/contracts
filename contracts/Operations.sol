@@ -14,7 +14,7 @@ library Operations {
         // uint8 opType
         uint32 accountId;
         uint16 tokenId;
-        uint128 amount;
+        uint256 amount; // TODO: zkSync uses uint128 for amount
         address owner;
     }
 
