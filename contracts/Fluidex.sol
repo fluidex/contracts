@@ -5,6 +5,7 @@ pragma solidity >=0.6.0 <0.8.0;
 import {
     ReentrancyGuard
 } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/SafeCast.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -50,13 +51,32 @@ contract Fluidex is ReentrancyGuard, Ownable {
         nonReentrant
     {
         // TODO: check valid quote token id. We may support only several quote tokens like USDC and DAI.
+        // TODO: maintain map in store
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
+    // 0 tokenId means native ETH coin
+    // TODO: zkSync uses uint128 for amount
+    function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
+        // TODO: addPriorityRequest
+
+        emit Deposit(tokenId, to, amount);
+    }
+
     /// @param to the L2 address of the deposit target.
+    // TODO: change to L2 address
+    function depositETH(address to) external payable {
+        // You must `approve` the allowance before calling this method
+        require(to != address(0), "invalid address");
+        // 0 tokenId means native ETH coin
+        registerDeposit(0, to, msg.value);
+    }
+
+    /// @param to the L2 address of the deposit target.
+    /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
-        address to,
+        address to, // TODO: change to L2 address
         uint128 amount
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
@@ -67,10 +87,10 @@ contract Fluidex is ReentrancyGuard, Ownable {
         token.safeTransferFrom(msg.sender, address(this), amount);
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
         uint256 realAmount = balanceAfterDeposit.sub(balanceBeforeDeposit);
-        emit Deposit(tokenId, to, realAmount);
+        registerDeposit(tokenId, to, realAmount);
     }
 
-    // debug purpose only
+    // debug purpose only, therefore we don't check balance
     function withdrawERC20(
         IERC20 token,
         address to,
@@ -84,5 +104,16 @@ contract Fluidex is ReentrancyGuard, Ownable {
         uint256 balanceAfterWithdraw = token.balanceOf(address(this));
         uint256 realAmount = balanceBeforeWithdraw.sub(balanceAfterWithdraw);
         emit Withdraw(tokenId, to, realAmount);
+    }
+
+    // debug purpose only, therefore we don't check balance
+    function withdrawETH(
+        address payable to,
+        uint128 amount
+    ) external nonReentrant onlyOwner {
+        require(to != address(0), "invalid address");
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "withdrawETH"); // ETH withdraw failed
+        emit Withdraw(0, to, amount);
     }
 }

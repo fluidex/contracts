@@ -59,4 +59,23 @@ describe("Fluidex", () => {
       .to.emit(fluidex, "Withdraw")
       .withArgs(tokenId, acc2addr, withdrawAmount);
   });
+
+  it("Deposit, withdraw ETH", async function () {
+    const depositAmount = 500;
+    const withdrawAmount = 300;
+
+    await expect(
+      fluidex
+        .connect(acc2)
+        .depositETH(acc2addr, {value: depositAmount})
+    )
+      .to.emit(fluidex, "Deposit")
+      .withArgs(0, acc2addr, depositAmount);
+
+    await expect(
+      fluidex.withdrawETH(acc2addr, withdrawAmount)
+    )
+      .to.emit(fluidex, "Withdraw")
+      .withArgs(0, acc2addr, withdrawAmount);
+  });
 });
