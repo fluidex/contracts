@@ -90,7 +90,7 @@ contract Fluidex is ReentrancyGuard, Ownable {
         registerDeposit(tokenId, to, realAmount);
     }
 
-    // debug purpose only
+    // debug purpose only, therefore we don't check balance
     function withdrawERC20(
         IERC20 token,
         address to,
@@ -104,5 +104,16 @@ contract Fluidex is ReentrancyGuard, Ownable {
         uint256 balanceAfterWithdraw = token.balanceOf(address(this));
         uint256 realAmount = balanceBeforeWithdraw.sub(balanceAfterWithdraw);
         emit Withdraw(tokenId, to, realAmount);
+    }
+
+    // debug purpose only, therefore we don't check balance
+    function withdrawETH(
+        address payable to,
+        uint128 amount
+    ) external nonReentrant onlyOwner {
+        require(to != address(0), "invalid address");
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "withdrawETH"); // ETH withdraw failed
+        emit Withdraw(0, to, amount);
     }
 }
