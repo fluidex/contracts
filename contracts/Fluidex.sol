@@ -56,26 +56,21 @@ contract Fluidex is ReentrancyGuard, Ownable {
     }
 
     // 0 tokenId means native ETH coin
-    function registerDeposit(uint16 tokenId, address to, uint128 amount) {
+    // TODO: use uint256 for amount?
+    function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
         // TODO: addPriorityRequest
 
-        emit Deposit(tokenId, to, realAmount);
+        emit Deposit(tokenId, to, amount);
     }
 
     /// @param to the L2 address of the deposit target.
     /// @param amount the deposit amount.
-    function depositETH(
-        address to, // TODO: change to L2 address
-        uint128 amount
-    ) external nonReentrant {
+    // TODO: change to L2 address
+    function depositETH(address to) external payable {
         // You must `approve` the allowance before calling this method
         require(to != address(0), "invalid address");
-
-        // TODO: 
-        uint256 realAmount = SafeCast.toUint128(msg.value);
-
         // 0 tokenId means native ETH coin
-        registerDeposit(0, to, realAmount);
+        registerDeposit(0, to, msg.value);
     }
 
     /// @param to the L2 address of the deposit target.
