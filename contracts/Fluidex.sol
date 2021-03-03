@@ -11,15 +11,18 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
+import "./Utils.sol";
+
+import "./Storage.sol";
+import "./Config.sol";
+import "./Events.sol";
+
+import "./Operations.sol";
+
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
-contract Fluidex is ReentrancyGuard, Ownable {
+contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
-
-    event NewToken(address tokenAddr, uint16 tokenId);
-    event NewTradingPair(uint16 baseTokenId, uint16 quoteTokenId);
-    event Deposit(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
-    event Withdraw(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
 
     uint16 constant TOKEN_NUM_LIMIT = 65535;
 
@@ -58,8 +61,16 @@ contract Fluidex is ReentrancyGuard, Ownable {
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
     function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
-        // TODO: addPriorityRequest
-
+        // Priority Queue request
+        Operations.Deposit memory op =
+            Operations.Deposit({
+                accountId: 0, // unknown at this point
+                owner: to,
+                tokenId: tokenId,
+                amount: amount
+            });
+        bytes memory pubData = Operations.writeDepositPubdataForPriorityQueue(op);
+        addPriorityRequest(Operations.OpType.Deposit, pubData);
         emit Deposit(tokenId, to, amount);
     }
 
@@ -115,5 +126,23 @@ contract Fluidex is ReentrancyGuard, Ownable {
         (bool success, ) = to.call{value: amount}("");
         require(success, "withdrawETH"); // ETH withdraw failed
         emit Withdraw(0, to, amount);
+    }
+
+    /// @notice Saves priority request in storage
+    /// @dev Calculates expiration block for request, store this request and emit NewPriorityRequest event
+    /// @param opType Rollup operation type
+    /// @param pubData Operation pubdata
+    function addPriorityRequest(Operations.OpType opType, bytes memory pubData) internal {
+        // Expiration block is: current block number + priority expiration delta
+        uint64 expirationBlock = uint64(block.number + PRIORITY_EXPIRATION);
+        uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
+        bytes20 hashedPubData = Utils.hashBytesToBytes20(pubData);
+        priorityRequests[nextPriorityRequestId] = PriorityOperation({
+            hashedPubData: hashedPubData,
+            expirationBlock: expirationBlock,
+            opType: opType
+        });
+        emit NewPriorityRequest(msg.sender, nextPriorityRequestId, opType, pubData, uint256(expirationBlock));
+        totalOpenPriorityRequests++;
     }
 }

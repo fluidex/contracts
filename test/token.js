@@ -46,6 +46,7 @@ describe("Fluidex", () => {
       tokenId
     );
 
+    // TODO: NewPriorityRequest event
     await expect(
       fluidex
         .connect(acc2)
@@ -64,6 +65,7 @@ describe("Fluidex", () => {
     const depositAmount = 500;
     const withdrawAmount = 300;
 
+    // TODO: NewPriorityRequest event
     await expect(
       fluidex
         .connect(acc2)
