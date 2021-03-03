@@ -6,12 +6,12 @@ pragma experimental ABIEncoderV2;
 
 /// @title Fluidex operations tools
 library Operations {
-	/// @notice Fluidex circuit operation type
+    /// @notice Fluidex circuit operation type
     enum OpType {
         Deposit
     }
 
-	// Deposit pubdata
+    // Deposit pubdata
     struct Deposit {
         // uint8 opType
         uint32 accountId;
@@ -20,7 +20,7 @@ library Operations {
         address owner;
     }
 
-	/// Serialize deposit pubdata
+    /// Serialize deposit pubdata
     function writeDepositPubdataForPriorityQueue(Deposit memory op) internal pure returns (bytes memory buf) {
         buf = abi.encodePacked(
             uint8(OpType.Deposit),
