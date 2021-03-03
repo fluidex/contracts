@@ -10,18 +10,17 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
-import "./Operations.sol";
+
 import "./Storage.sol";
+import "./Config.sol";
+import "./Events.sol";
+
+import "./Operations.sol";
 
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
-contract Fluidex is ReentrancyGuard, Storage, Ownable {
+contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
-
-    event NewToken(address tokenAddr, uint16 tokenId);
-    event NewTradingPair(uint16 baseTokenId, uint16 quoteTokenId);
-    event Deposit(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
-    event Withdraw(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
 
     uint16 constant TOKEN_NUM_LIMIT = 65535;
 
@@ -132,10 +131,10 @@ contract Fluidex is ReentrancyGuard, Storage, Ownable {
     /// @param opType Rollup operation type
     /// @param pubData Operation pubdata
     function addPriorityRequest(Operations.OpType opType, bytes memory pubData) internal {
-        // // Expiration block is: current block number + priority expiration delta
-        // uint64 expirationBlock = uint64(block.number + PRIORITY_EXPIRATION);
+        // Expiration block is: current block number + priority expiration delta
+        uint64 expirationBlock = uint64(block.number + PRIORITY_EXPIRATION);
 
-        // uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
+        uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
 
         // bytes20 hashedPubData = Utils.hashBytesToBytes20(pubData);
 
@@ -145,7 +144,7 @@ contract Fluidex is ReentrancyGuard, Storage, Ownable {
         //     opType: opType
         // });
 
-        // emit NewPriorityRequest(msg.sender, nextPriorityRequestId, opType, pubData, uint256(expirationBlock));
+        emit NewPriorityRequest(msg.sender, nextPriorityRequestId, opType, pubData, uint256(expirationBlock));
 
         totalOpenPriorityRequests++;
     }
