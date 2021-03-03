@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity 0.8.0;
 
 library Utils {
     function hashBytesToBytes20(bytes memory _bytes) internal pure returns (bytes20) {
