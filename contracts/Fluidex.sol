@@ -54,11 +54,13 @@ contract Fluidex is ReentrancyGuard, Ownable {
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
-    function registerDeposit(uint16 _tokenId, uint128 _amount, address _owner) {
+    // 0 tokenId means native ETH coin
+    function registerDeposit(uint16 tokenId, address to, uint128 amount) {
         // TODO: addPriorityRequest
+
+        emit Deposit(tokenId, to, realAmount);
     }
 
-    // TODO: balance map?
     /// @param to the L2 address of the deposit target.
     /// @param amount the deposit amount.
     function depositETH(
@@ -69,11 +71,9 @@ contract Fluidex is ReentrancyGuard, Ownable {
         require(to != address(0), "invalid address");
         uint256 realAmount = SafeCast.toUint128(msg.value);
         // 0 tokenId means ETH
-        registerDeposit(tokenId, to, realAmount);
-        emit Deposit(0, to, realAmount);
+        registerDeposit(0, to, realAmount);
     }
 
-    // TODO: balance map?
     /// @param to the L2 address of the deposit target.
     /// @param amount the deposit amount.
     function depositERC20(
@@ -90,7 +90,6 @@ contract Fluidex is ReentrancyGuard, Ownable {
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
         uint256 realAmount = balanceAfterDeposit.sub(balanceBeforeDeposit);
         registerDeposit(tokenId, to, realAmount);
-        emit Deposit(tokenId, to, realAmount);
     }
 
     // debug purpose only
