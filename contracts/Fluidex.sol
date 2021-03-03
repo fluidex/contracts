@@ -50,10 +50,15 @@ contract Fluidex is ReentrancyGuard, Ownable {
         nonReentrant
     {
         // TODO: check valid quote token id. We may support only several quote tokens like USDC and DAI.
-        // TODO: add map in store
+        // TODO: maintain map in store
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
+    function registerDeposit(uint16 _tokenId, uint128 _amount, address _owner) {
+        // TODO: addPriorityRequest
+    }
+
+    // TODO: balance map?
     /// @param to the L2 address of the deposit target.
     /// @param amount the deposit amount.
     function depositETH(
@@ -62,12 +67,10 @@ contract Fluidex is ReentrancyGuard, Ownable {
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
         require(to != address(0), "invalid address");
-
-        // TODO: balance map?
-        // TODO: addPriorityRequest
-
+        uint256 realAmount = SafeCast.toUint128(msg.value);
         // 0 tokenId means ETH
-        emit Deposit(0, to, SafeCast.toUint128(msg.value));
+        registerDeposit(tokenId, to, realAmount);
+        emit Deposit(0, to, realAmount);
     }
 
     // TODO: balance map?
@@ -86,6 +89,7 @@ contract Fluidex is ReentrancyGuard, Ownable {
         token.safeTransferFrom(msg.sender, address(this), amount);
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
         uint256 realAmount = balanceAfterDeposit.sub(balanceBeforeDeposit);
+        registerDeposit(tokenId, to, realAmount);
         emit Deposit(tokenId, to, realAmount);
     }
 
