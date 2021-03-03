@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 import "./Operations.sol";
+import "./Storage.sol";
 
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
 contract Fluidex is ReentrancyGuard, Ownable {
@@ -136,16 +137,16 @@ contract Fluidex is ReentrancyGuard, Ownable {
 
         // uint64 nextPriorityRequestId = firstPriorityRequestId + totalOpenPriorityRequests;
 
-        // bytes20 hashedPubData = Utils.hashBytesToBytes20(_pubData);
+        // bytes20 hashedPubData = Utils.hashBytesToBytes20(pubData);
 
         // priorityRequests[nextPriorityRequestId] = PriorityOperation({
         //     hashedPubData: hashedPubData,
         //     expirationBlock: expirationBlock,
-        //     opType: _opType
+        //     opType: opType
         // });
 
-        // emit NewPriorityRequest(msg.sender, nextPriorityRequestId, _opType, _pubData, uint256(expirationBlock));
+        // emit NewPriorityRequest(msg.sender, nextPriorityRequestId, opType, pubData, uint256(expirationBlock));
 
-        // totalOpenPriorityRequests++;
+        totalOpenPriorityRequests++;
     }
 }

@@ -2,9 +2,11 @@
 
 pragma solidity >=0.6.0 <0.8.0;
 
-/// @title FluiDex operations tools
+pragma experimental ABIEncoderV2;
+
+/// @title Fluidex operations tools
 library Operations {
-	/// @notice FluiDex circuit operation type
+	/// @notice Fluidex circuit operation type
     enum OpType {
         Deposit
     }
