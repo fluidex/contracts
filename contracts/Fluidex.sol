@@ -14,7 +14,7 @@ import "./Operations.sol";
 import "./Storage.sol";
 
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
-contract Fluidex is ReentrancyGuard, Ownable {
+contract Fluidex is ReentrancyGuard, Storage, Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
