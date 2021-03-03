@@ -19,5 +19,4 @@ interface Events {
         bytes pubData,
         uint256 expirationBlock
     );
-
 }
