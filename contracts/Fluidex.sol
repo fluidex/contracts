@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.0;
-
 import {
     ReentrancyGuard
-} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/SafeCast.sol";
+} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
@@ -22,6 +22,8 @@ import "./Operations.sol";
 // 2021.01.05: Currently this is only a `mock` contract used to test Fluidex website.
 contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     using SafeERC20 for IERC20;
+    
+    // note: in solidity 0.8.0 we can actually use built-in overflow check instead of SafeMath
     using SafeMath for uint256;
 
     uint16 constant TOKEN_NUM_LIMIT = 65535;
