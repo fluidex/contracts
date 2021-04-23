@@ -106,7 +106,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         IERC20 token,
         address to,
         uint128 amount
-    ) external nonReentrant onlyOwner {
+    ) external nonReentrant {
         require(to != address(0), "invalid address");
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
@@ -121,7 +121,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     function withdrawETH(
         address payable to,
         uint128 amount
-    ) external nonReentrant onlyOwner {
+    ) external nonReentrant {
         require(to != address(0), "invalid address");
         (bool success, ) = to.call{value: amount}("");
         require(success, "withdrawETH"); // ETH withdraw failed
