@@ -24,12 +24,12 @@ describe("Fluidex", () => {
       "TST",
       decimal,
       acc2addr,
-      1000
+      initialBalance
     );
     await fluidex.deployed();
     await fluidex.initialize();
     await erc20Mock.deployed();
-    await erc20Mock.connect(acc2).approve(fluidex.address, 1000);
+    await erc20Mock.connect(acc2).approve(fluidex.address, initialBalance);
   });
 
   it("Add token, deposit, withdraw", async function () {
