@@ -25,6 +25,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     using SafeMath for uint256;
 
     uint16 constant TOKEN_NUM_LIMIT = 65535;
+    uint16 constant USER_NUM_LIMIT = 65535;
 
     uint16 public tokenNum;
     mapping(uint16 => address) public tokenIdToAddr;
@@ -64,8 +65,16 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     // TODO: priority queue? check signature?
     function registerUser(address ethAddr) internal {
-        // TODO:
+        userNum++;
+        require(userAddrToId[ethAddr] == 0, "user existed");
+        require(userNum < USER_NUM_LIMIT, "user num limit reached");
+
+        uint16 userId = userNum;
+        userIdToAddr[userId] = ethAddr;
+        userAddrToId[ethAddr] = userId;
+        // TODO: bjj?
         emit RegisterUser(userId, ethAddr);
+        return userId;
     }
 
     // 0 tokenId means native ETH coin
