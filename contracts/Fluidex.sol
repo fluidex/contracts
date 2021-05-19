@@ -62,6 +62,12 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
+    // TODO: priority queue? check signature?
+    function registerUser(address ethAddr) internal {
+        // TODO:
+        emit RegisterUser(userId, ethAddr);
+    }
+
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
     function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
