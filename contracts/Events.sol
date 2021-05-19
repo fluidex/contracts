@@ -8,6 +8,7 @@ import "./Operations.sol";
 interface Events {
     event NewToken(address tokenAddr, uint16 tokenId);
     event NewTradingPair(uint16 baseTokenId, uint16 quoteTokenId);
+    event RegisterUser(address ethAddr, uint16 userId);
     event Deposit(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
     event Withdraw(uint16 tokenId, address to, uint256 amount); // emit tokenId or tokenAddr?
 

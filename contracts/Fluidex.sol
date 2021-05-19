@@ -64,7 +64,10 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     }
 
     // TODO: priority queue? check signature?
-    function registerUser(address ethAddr) internal {
+    function registerUser(address ethAddr)
+        internal
+        returns (uint16)
+    {
         userNum++;
         require(userAddrToId[ethAddr] == 0, "user existed");
         require(userNum < USER_NUM_LIMIT, "user num limit reached");
@@ -73,7 +76,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         userIdToAddr[userId] = ethAddr;
         userAddrToId[ethAddr] = userId;
         // TODO: bjj?
-        emit RegisterUser(userId, ethAddr);
+        emit RegisterUser(ethAddr, userId);
         return userId;
     }
 
