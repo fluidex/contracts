@@ -30,6 +30,10 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     mapping(uint16 => address) public tokenIdToAddr;
     mapping(address => uint16) public tokenAddrToId;
 
+    uint16 public userNum;
+    mapping(uint16 => address) public userIdToAddr;
+    mapping(address => uint16) public userAddrToId;
+
     function initialize() external {}
 
     function addToken(address tokenAddr)
