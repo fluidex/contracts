@@ -14,6 +14,7 @@ import "hardhat/console.sol";
 import "./Utils.sol";
 
 import "./Storage.sol";
+import "./UserInfo.sol";
 import "./Config.sol";
 import "./Events.sol";
 
@@ -32,8 +33,8 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     mapping(address => uint16) public tokenAddrToId;
 
     uint16 public userNum;
-    mapping(uint16 => address) public userIdToAddr;
-    mapping(address => uint16) public userAddrToId;
+    mapping(uint16 => UserInfo) public userIdToUserInfo;
+    mapping(bytes => uint16) public userBjjPubkeyToUserId;
 
     function initialize() external {}
 
@@ -69,12 +70,15 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         returns (uint16)
     {
         userNum++;
-        require(userAddrToId[ethAddr] == 0, "user existed");
+        require(userBjjPubkeyToUserId[bjjPubkey] == 0, "user existed");
         require(userNum < USER_NUM_LIMIT, "user num limit reached");
 
         uint16 userId = userNum;
-        userIdToAddr[userId] = ethAddr;
-        userAddrToId[ethAddr] = userId;
+        userIdToUserInfo[userId] = UserInfo({
+            ethAddr: ethAddr,
+            bjjPubkey: bjjPubkey,
+        });
+        userBjjPubkeyToUserId[bjjPubkey] = userId;
         emit RegisterUser(ethAddr, userId, bjjPubkey);
         return userId;
     }
@@ -102,7 +106,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         // You must `approve` the allowance before calling this method
 
         // TODO: check `to` format
-        if (userAddrToId[to] == 0) {
+        if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
 
@@ -123,7 +127,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         require(tokenId != 0, "invalid token");
 
         // TODO: check `to` format
-        if (userAddrToId[to] == 0) {
+        if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
 
