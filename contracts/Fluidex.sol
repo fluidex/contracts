@@ -34,7 +34,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     uint16 public userNum;
     mapping(uint16 => UserInfo) public userIdToUserInfo;
-    mapping(bytes => uint16) public userBjjPubkeyToUserId;
+    mapping(bytes32 => uint16) public userBjjPubkeyToUserId;
 
     function initialize() external {}
 
@@ -65,7 +65,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     }
 
     // TODO: check signature?
-    function registerUser(address ethAddr, bytes memory bjjPubkey)
+    function registerUser(address ethAddr, bytes32 bjjPubkey)
         internal
         returns (uint16)
     {
@@ -85,7 +85,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
-    function registerDeposit(uint16 tokenId, bytes memory to, uint256 amount) internal {
+    function registerDeposit(uint16 tokenId, bytes32 to, uint256 amount) internal {
         // Priority Queue request
         Operations.Deposit memory op =
             Operations.Deposit({
@@ -101,11 +101,10 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     /// @param to the L2 address of the deposit target.
     function depositETH(
-        bytes calldata to // L2 bjjPubkey
+        bytes32 to // L2 bjjPubkey
     ) external payable {
         // You must `approve` the allowance before calling this method
 
-        require(to.length == 32, "invalid bjjPubkey");
         if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
@@ -118,7 +117,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
-        bytes calldata to, // L2 bjjPubkey
+        bytes32 to, // L2 bjjPubkey
         uint128 amount
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
@@ -126,7 +125,6 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
 
-        require(to.length == 32, "invalid bjjPubkey");
         if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
