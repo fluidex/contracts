@@ -97,14 +97,13 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     /// @param to the L2 address of the deposit target.
     function depositETH(
-        bytes calldata bjjPubkeyFrom,
-        address to // TODO: change to L2 address
+        bytes calldata to // L2 bjjPubkey
     ) external payable {
         // You must `approve` the allowance before calling this method
-        require(to != address(0), "invalid address");
 
-        if (userAddrToId[msg.sender] == 0) {
-            registerUser(msg.sender, bjjPubkeyFrom);
+        // TODO: check `to` format
+        if (userAddrToId[to] == 0) {
+            registerUser(msg.sender, to);
         }
 
         // 0 tokenId means native ETH coin
@@ -115,17 +114,17 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
-        bytes calldata bjjPubkeyFrom,
-        address to, // TODO: change to L2 address
+        bytes calldata to, // L2 bjjPubkey
         uint128 amount
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
-        require(to != address(0), "invalid address");
+
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
 
-        if (userAddrToId[msg.sender] == 0) {
-            registerUser(msg.sender, bjjPubkeyFrom);
+        // TODO: check `to` format
+        if (userAddrToId[to] == 0) {
+            registerUser(msg.sender, to);
         }
 
         uint256 balanceBeforeDeposit = token.balanceOf(address(this));
