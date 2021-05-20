@@ -65,10 +65,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     }
 
     // TODO: check signature?
-    function registerUser(address ethAddr, bytes32 bjjPubkey)
-        internal
-        returns (uint16)
-    {
+    function registerUser(address ethAddr, bytes32 bjjPubkey) internal {
         userNum++;
         require(userBjjPubkeyToUserId[bjjPubkey] == 0, "user existed");
         require(userNum < USER_NUM_LIMIT, "user num limit reached");
@@ -80,7 +77,6 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         });
         userBjjPubkeyToUserId[bjjPubkey] = userId;
         emit RegisterUser(ethAddr, userId, bjjPubkey);
-        return userId;
     }
 
     // 0 tokenId means native ETH coin
