@@ -8,7 +8,7 @@ describe("Fluidex", () => {
   let senderAddr;
   let acc2;
   let acc2addr;
-  const mockBjj = randomBytes(32);
+  const mockBjj = "randomBytes(32)";
   const initialBalance = 1000;
   const decimal = 2;
 

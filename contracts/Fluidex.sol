@@ -34,7 +34,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     uint16 public userNum;
     mapping(uint16 => UserInfo) public userIdToUserInfo;
-    mapping(bytes32 => uint16) public userBjjPubkeyToUserId;
+    mapping(string => uint16) public userBjjPubkeyToUserId;
 
     function initialize() external {}
 
@@ -65,7 +65,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     }
 
     // TODO: check signature?
-    function registerUser(address ethAddr, bytes32 bjjPubkey) internal {
+    function registerUser(address ethAddr, string memory bjjPubkey) internal {
         userNum++;
         require(userBjjPubkeyToUserId[bjjPubkey] == 0, "user existed");
         require(userNum < USER_NUM_LIMIT, "user num limit reached");
@@ -81,7 +81,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
-    function registerDeposit(uint16 tokenId, bytes32 to, uint256 amount) internal {
+    function registerDeposit(uint16 tokenId, string memory to, uint256 amount) internal {
         // Priority Queue request
         Operations.Deposit memory op =
             Operations.Deposit({
@@ -97,7 +97,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     /// @param to the L2 address of the deposit target.
     function depositETH(
-        bytes32 to // L2 bjjPubkey
+        string calldata to // L2 bjjPubkey
     ) external payable {
         // You must `approve` the allowance before calling this method
 
@@ -113,7 +113,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
-        bytes32 to, // L2 bjjPubkey
+        string calldata to, // L2 bjjPubkey
         uint128 amount
     ) external nonReentrant {
         // You must `approve` the allowance before calling this method
