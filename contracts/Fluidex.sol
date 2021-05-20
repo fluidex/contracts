@@ -63,8 +63,8 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         emit NewTradingPair(baseTokenId, quoteTokenId);
     }
 
-    // TODO: priority queue? check signature?
-    function registerUser(address ethAddr)
+    // TODO: check signature?
+    function registerUser(address ethAddr, bytes memory bjjPubkey)
         internal
         returns (uint16)
     {
@@ -75,8 +75,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         uint16 userId = userNum;
         userIdToAddr[userId] = ethAddr;
         userAddrToId[ethAddr] = userId;
-        // TODO: bjj?
-        emit RegisterUser(ethAddr, userId);
+        emit RegisterUser(ethAddr, userId, bjjPubkey);
         return userId;
     }
 
@@ -97,10 +96,17 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     }
 
     /// @param to the L2 address of the deposit target.
-    // TODO: change to L2 address
-    function depositETH(address to) external payable {
+    function depositETH(
+        bytes calldata bjjPubkeyFrom,
+        address to // TODO: change to L2 address
+    ) external payable {
         // You must `approve` the allowance before calling this method
         require(to != address(0), "invalid address");
+
+        if (userAddrToId[msg.sender] == 0) {
+            registerUser(msg.sender, bjjPubkeyFrom);
+        }
+
         // 0 tokenId means native ETH coin
         registerDeposit(0, to, msg.value);
     }
@@ -109,6 +115,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     /// @param amount the deposit amount.
     function depositERC20(
         IERC20 token,
+        bytes calldata bjjPubkeyFrom,
         address to, // TODO: change to L2 address
         uint128 amount
     ) external nonReentrant {
@@ -116,6 +123,11 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         require(to != address(0), "invalid address");
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
+
+        if (userAddrToId[msg.sender] == 0) {
+            registerUser(msg.sender, bjjPubkeyFrom);
+        }
+
         uint256 balanceBeforeDeposit = token.balanceOf(address(this));
         token.safeTransferFrom(msg.sender, address(this), amount);
         uint256 balanceAfterDeposit = token.balanceOf(address(this));
