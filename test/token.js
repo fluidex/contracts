@@ -51,7 +51,7 @@ describe("Fluidex", () => {
     await expect(
       fluidex
         .connect(acc2)
-        .depositERC20(erc20Mock.address, mockBjj, acc2addr, depositAmount)
+        .depositERC20(erc20Mock.address, mockBjj, depositAmount)
     )
       .to.emit(fluidex, "Deposit")
       .withArgs(tokenId, acc2addr, depositAmount);
@@ -71,7 +71,7 @@ describe("Fluidex", () => {
     await expect(
       fluidex
         .connect(acc2)
-        .depositETH(mockBjj, acc2addr, {value: depositAmount})
+        .depositETH(mockBjj, {value: depositAmount})
     )
       .to.emit(fluidex, "Deposit")
       .withArgs(0, acc2addr, depositAmount);

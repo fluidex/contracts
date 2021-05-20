@@ -85,7 +85,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
 
     // 0 tokenId means native ETH coin
     // TODO: zkSync uses uint128 for amount
-    function registerDeposit(uint16 tokenId, address to, uint256 amount) internal {
+    function registerDeposit(uint16 tokenId, bytes memory to, uint256 amount) internal {
         // Priority Queue request
         Operations.Deposit memory op =
             Operations.Deposit({
