@@ -105,7 +105,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
     ) external payable {
         // You must `approve` the allowance before calling this method
 
-        // TODO: check `to` format
+        require(to.length == 32, "invalid bjjPubkey");
         if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
@@ -126,7 +126,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         uint16 tokenId = tokenAddrToId[address(token)];
         require(tokenId != 0, "invalid token");
 
-        // TODO: check `to` format
+        require(to.length == 32, "invalid bjjPubkey");
         if (userBjjPubkeyToUserId[to] == 0) {
             registerUser(msg.sender, to);
         }
