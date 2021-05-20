@@ -76,7 +76,7 @@ contract Fluidex is ReentrancyGuard, Storage, Config, Events, Ownable {
         uint16 userId = userNum;
         userIdToUserInfo[userId] = UserInfo({
             ethAddr: ethAddr,
-            bjjPubkey: bjjPubkey,
+            bjjPubkey: bjjPubkey
         });
         userBjjPubkeyToUserId[bjjPubkey] = userId;
         emit RegisterUser(ethAddr, userId, bjjPubkey);
