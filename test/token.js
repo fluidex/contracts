@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const { randomBytes } = require("@ethersproject/random");
 
 describe("Fluidex", () => {
   let fluidex;
@@ -7,6 +8,7 @@ describe("Fluidex", () => {
   let senderAddr;
   let acc2;
   let acc2addr;
+  const mockBjj = randomBytes(32);
   const initialBalance = 1000;
   const decimal = 2;
 
@@ -47,7 +49,6 @@ describe("Fluidex", () => {
     );
 
     // TODO: NewPriorityRequest event
-    const mockBjj = [];
     await expect(
       fluidex
         .connect(acc2)
@@ -67,7 +68,6 @@ describe("Fluidex", () => {
     const withdrawAmount = 300;
 
     // TODO: NewPriorityRequest event
-    const mockBjj = [];
     await expect(
       fluidex
         .connect(acc2)
