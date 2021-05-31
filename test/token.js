@@ -55,7 +55,7 @@ describe("Fluidex", () => {
     )
       .to.emit(fluidex, "NewPriorityRequest")
       .to.emit(fluidex, "Deposit")
-      .withArgs(tokenId, mockBjj, depositAmount);
+      // .withArgs(tokenId, mockBjj, depositAmount);
 
     await expect(
       fluidex.withdrawERC20(erc20Mock.address, acc2addr, withdrawAmount)
@@ -75,7 +75,7 @@ describe("Fluidex", () => {
     )
       .to.emit(fluidex, "NewPriorityRequest")
       .to.emit(fluidex, "Deposit")
-      .withArgs(0, mockBjj, depositAmount);
+      // .withArgs(0, mockBjj, depositAmount);
 
     await expect(
       fluidex.withdrawETH(acc2addr, withdrawAmount)
