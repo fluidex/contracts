@@ -4,14 +4,14 @@
     "fmt": "prettier --write 'contracts/**/*.sol' 'test/**/*.js'"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.1",
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "chai": "^4.2.0",
-    "ethereum-waffle": "^3.2.1",
-    "ethers": "^5.0.24",
-    "hardhat": "^2.0.6",
-    "prettier": "^2.2.1",
-    "prettier-plugin-solidity": "^1.0.0-beta.2"
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.4",
+    "hardhat": "^2.6.0",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.3.0"
